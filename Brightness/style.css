@@ -1,0 +1,105 @@
+/* Using a custom font for a slightly more playful feel */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    transition: background-color 0.5s ease;
+    overflow: hidden;
+    /* Cursors */
+    cursor: crosshair;
+}
+
+/* The main game area where all elements will be absolutely positioned */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Common styles for the celestial bodies */
+.celestial-body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    will-change: transform, box-shadow;
+}
+
+#sun {
+    background-color: #FFD700; /* Gold */
+    box-shadow: 0 0 10px 5px rgba(255, 223, 0, 0.5);
+    transition: box-shadow 0.5s ease;
+    z-index: 1;
+}
+
+#occluder {
+    background-color: #000;
+    z-index: 10;
+}
+
+#cannon {
+    position: absolute;
+    left: 50px;
+    top: 80%; /* Moved cannon down */
+    width: 150px; /* Increased size for detail */
+    height: 40px; 
+    background: linear-gradient(to top, #2d3748, #4a5568, #2d3748); /* Metallic sheen */
+    border: 3px solid #1a202c;
+    border-right: none; /* Seamless join with muzzle */
+    border-radius: 20px 0 0 20px; /* Rounded back */
+    transform-origin: 40px 50%; /* Adjusted pivot point */
+    z-index: 20;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.1);
+}
+
+/* Cannon Base/Wheel */
+#cannon::after {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at center, #1a202c 25%, #4a5568 28%, #2d3748 55%); /* Hub and rim effect */
+    border-radius: 50%;
+    border: 4px solid #1a202c;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.5);
+    z-index: -1; /* Place behind the barrel */
+}
+
+/* Cannon Muzzle */
+#cannon::before {
+    content: '';
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 55px; /* Taller than the barrel for a flared look */
+    background: #4A5568;
+    border: 4px solid #1a202c;
+    border-left: 1px solid #6c7a8f;
+    border-radius: 8px;
+}
+
+#ball {
+    position: absolute;
+    width: 25px; /* Slightly larger ball */
+    height: 25px;
+    background-color: #718096; /* Gray-500 */
+    border-radius: 50%;
+    z-index: 5;
+    display: none; /* Initially hidden */
+}
+
+#cannon-controls {
+    left: 75px; 
+    top: calc(80% + 55px); 
+    transform: translateX(-50%); 
+    z-index: 21;
+}
+

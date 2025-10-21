@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brightness Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-900 text-white">
+
+    <!-- The main container for the UI/game -->
+    <div id="game-container">
+        <!-- Sun: The source of light -->
+        <div id="sun" class="celestial-body"></div>
+
+        <!-- Occluder: The black body that covers the sun -->
+        <div id="occluder" class="celestial-body"></div>
+
+        <!-- Cannon: The user's interaction point -->
+        <div id="cannon"></div>
+        
+        <!-- New Cannon Controls -->
+        <div id="cannon-controls" class="absolute flex flex-col gap-2">
+            <button id="aim-up" class="px-3 py-2 text-sm bg-gray-600 rounded-lg hover:bg-gray-500 active:bg-gray-700">▲</button>
+            <button id="aim-down" class="px-3 py-2 text-sm bg-gray-600 rounded-lg hover:bg-gray-500 active:bg-gray-700">▼</button>
+        </div>
+
+        <!-- Ball: The projectile fired from the cannon -->
+        <div id="ball"></div>
+    </div>
+
+    <!-- Instructions and Controls Panel -->
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 bg-gray-800 bg-opacity-50 p-4 rounded-lg text-center select-none">
+        <h1 class="text-xl md:text-2xl mb-2">The Worst Brightness Control</h1>
+        <p class="text-xs md:text-sm">Tap the cannon to fire. Hit the black orb to increase the Brightness.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

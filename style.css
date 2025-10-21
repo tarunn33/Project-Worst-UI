@@ -1,0 +1,198 @@
+/* General Styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    
+    /* New dark, animated background */
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+    background-size: 200% 200%;
+    animation: moveBackground 15s ease-in-out infinite;
+    
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Keyframe Animations */
+@keyframes moveBackground {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* New Icon Jiggle Animation */
+@keyframes jiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+    75% { transform: rotate(-4deg); }
+    100% { transform: rotate(0deg); }
+}
+
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.delay-1 {
+    animation-delay: 0.2s;
+}
+
+/* Header - New Dark Style */
+header {
+    width: 100%;
+    background-color: #1a1a1a; /* Dark header */
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #333;
+    box-sizing: border-box; 
+    z-index: 10;
+}
+
+.logo {
+    margin-right: 15px;
+}
+
+.team-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f0f0f0; /* Light text */
+    margin: 0;
+}
+
+/* Main Content Area */
+main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Container for the Buttons - New Dark Card */
+.button-container {
+    background-color: #2d2d2d; /* Dark card */
+    border: 1px solid #444;
+    
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); /* Stronger shadow for dark bg */
+    
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    max-width: 700px;
+    width: 100%;
+}
+
+/* Heading Style for Dark Card */
+.container-heading {
+    grid-column: 1 / -1; 
+    text-align: center;
+    margin: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e0e0e0; /* Light text */
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Base Button Style (No color) */
+.attractive-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 25px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #ffffff;
+    
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    
+    /* Setup for animated gradient */
+    background-size: 200% auto;
+    
+    transition: all 0.3s ease-out; /* Smooth transition for all properties */
+}
+
+.button-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    transition: transform 0.3s ease;
+}
+
+/* --- Individual Button Colors --- */
+/* We use a 3-stop gradient (A -> B -> A) to make the hover animation loop seamlessly */
+
+#btn-volume {
+    background-image: linear-gradient(to right, #00c6ff, #0072ff, #00c6ff);
+}
+
+#btn-nav {
+    background-image: linear-gradient(to right, #8e2de2, #4a00e0, #8e2de2);
+}
+
+#btn-brightness {
+    background-image: linear-gradient(to right, #f7971e, #ffd200, #f7971e);
+}
+
+#btn-phone {
+    background-image: linear-gradient(to right, #00b09b, #96c93d, #00b09b);
+}
+
+#btn-birthday {
+    background-image: linear-gradient(to right, #e53935, #ec407a, #e53935);
+}
+
+#btn-submit {
+    background-image: linear-gradient(to right, #11998e, #38ef7d, #11998e);
+}
+
+
+/* --- HOVER & ACTIVE ANIMATIONS --- */
+
+.attractive-button:hover {
+    /* This slides the gradient to the right */
+    background-position: right center;
+    
+    /* Lift the button */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.attractive-button:hover .button-icon {
+    /* Play the jiggle animation */
+    animation: jiggle 0.5s ease-in-out;
+}
+
+/* Active/Click Effect */
+.attractive-button:active {
+    transform: translateY(-2px) scale(0.98); /* Squish and lower */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}

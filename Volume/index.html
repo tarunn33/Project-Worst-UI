@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volume Control Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-area">
+        </div>
+
+    <div id="ui-container">
+        <h1>Volume Control</h1>
+        <p>Click any number to set the volume!</p>
+        <p>Avoid the bombs!</p>
+        <div class="volume-info">
+            <strong>Current Volume:</strong>
+            <span id="current-volume">0</span>
+        </div>
+        <button id="start-button">Start Game</button>
+    </div>
+
+    <audio 
+        id="audio-player" 
+        loop 
+        src="https://www.soundjay.com/nature/sounds/river-1.mp3">
+    </audio>
+
+    <div id="game-over-screen" class="hidden">
+        <div class="game-over-box">
+            <h2>Game Over!</h2>
+            <button id="try-again-button">Try Again</button>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
