@@ -1,0 +1,89 @@
+/* CSS to make the UI as unpleasant as possible */
+body {
+    font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+    background-color: #FFFF99; /* Sickly yellow */
+    color: #FF00FF; /* Bright magenta */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Prevents scrolling from excessive clicking */
+}
+
+.container {
+    border: 10px dashed #FF0000; /* Garish red border */
+    background-color: #CCFFFF; /* Clashing cyan */
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 20px 10px #000000;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #0000FF; /* Bright blue */
+    margin-top: 0;
+    /* Blinking text effect for maximum annoyance */
+    animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+#current-date {
+    font-size: 3.5em;
+    font-weight: bold;
+    color: #006400; /* Dark green */
+    background-color: #FFFFFF;
+    border: 4px solid #000000;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px dotted #FF6600; /* Bright orange */
+    padding: 15px;
+}
+
+.control-group h2 {
+    font-size: 2em;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+/* The buttons with the inverted logic */
+button {
+    font-size: 3em;
+    width: 100px;
+    height: 80px;
+    margin: 10px;
+    cursor: pointer;
+    background-color: #FF99CC; /* Unpleasant pink */
+    border: 5px outset #990099; /* Purple */
+    color: #000;
+}
+
+button:active {
+    border-style: inset;
+    background-color: #FF6699;
+}
+
+#submit-btn {
+    margin-top: 40px;
+    font-size: 1.5em;
+    background-color: #C0C0C0; /* Dull gray */
+    color: #555;
+    cursor: not-allowed;
+    width: 200px;
+    height: 60px;
+}

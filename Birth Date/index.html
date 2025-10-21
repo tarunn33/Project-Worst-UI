@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Birthdate!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Select Your Date of Birth</h1>
+        <p>(Please be patient...)</p>
+
+        <div id="current-date">January 1, 1900</div>
+
+        <div class="controls">
+            <div class="control-group">
+                <h2>Month</h2>
+                <button onclick="changeMonth(-1)" title="Decrease Month">&#9650;</button>
+                <button onclick="changeMonth(1)" title="Increase Month">&#9660;</button>
+            </div>
+
+            <div class="control-group">
+                <h2>Day</h2>
+                <button onclick="changeDay(-1)" title="Decrease Day">&#9650;</button>
+                <button onclick="changeDay(1)" title="Increase Day">&#9660;</button>
+            </div>
+        </div>
+
+        <button id="submit-btn" onclick="submitDate()">Submit</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
