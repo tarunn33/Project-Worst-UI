@@ -5,35 +5,69 @@ const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
-
-// Array of frustrating messages for the submit button
 const submitMessages = [
-    "Processing... please wait.",
-    "Are you *really* sure?",
+    "Processing... please wait.", "Are you *really* sure?",
     "Final check. This is permanent. Maybe.",
     "Error 404: Birthday not found. Please try again.",
     "Hmm, that doesn't look right. Click submit again to confirm.",
     "Date successfully... lost. Please re-select from 1900.",
-    "Saving... Do not turn off your browser.",
-    "Just one more click. I promise.",
+    "Saving... Do not turn off your browser.", "Just one more click. I promise.",
     "Uploading your data to the mainframe... (which is a toaster).",
     "Confirmed! Your birthday is now January 1, 1900.",
     "Signature invalid. Please click submit again to re-sign."
 ];
-
-// Define how many "tries" (submit clicks) are needed
 const SUBMIT_THRESHOLD = 5; 
+const CLICK_DELAY_MS = 500; // INCREASED delay
+const RESET_CHANCE = 0.04; // INCREASED reset chance (4%)
 
 // --- GLOBAL STATE VARIABLES ---
 let currentDate = new Date(1900, 0, 1);
-let clickCount = 0; // Tracks date changes to enable submit
-let submitClickCount = 0; // Tracks submit clicks for the final message
+let clickCount = 0;
+let submitClickCount = 0;
 
 // --- DOM ELEMENTS (will be assigned on load) ---
 let dateDisplay;
 let submitButton;
+let mainContainer;
 
-// --- FUNCTIONS ---
+// --- WORSENING FUNCTIONS ---
+
+/**
+ * Applies all the "worsening" effects on every click.
+ */
+function applyWorsening() {
+    // 1. Debounce (disable buttons and set global wait cursor)
+    document.body.classList.add('debouncing');
+    
+    // 2. Flicker Date
+    dateDisplay.classList.add('flickering');
+
+    setTimeout(() => {
+        document.body.classList.remove('debouncing');
+        dateDisplay.classList.remove('flickering');
+    }, CLICK_DELAY_MS);
+
+    // 3. Move Target
+    const x = Math.random() * 40 - 20; // -20px to +20px
+    const y = Math.random() * 40 - 20;
+    mainContainer.style.left = x + 'px';
+    mainContainer.style.top = y + 'px';
+
+    // 4. Random Background Color
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+
+    // 5. Random Reset (The most evil)
+    if (Math.random() < RESET_CHANCE) {
+        alert("CRITICAL ERROR! SESSION CORRUPTED. All progress lost. Please start again from 1900.");
+        currentDate = new Date(1900, 0, 1);
+        updateDisplay();
+    }
+}
+
+// --- CORE FUNCTIONS ---
 
 /**
  * Updates the date text on the screen.
@@ -49,17 +83,12 @@ function updateDisplay() {
  * Tracks the user's clicks. After 3 clicks, it enables the submit button.
  */
 function registerClick() {
-    // We only care about the first 3 clicks
     if (clickCount < 3) {
-        clickCount++; // Increment the "try" counter
-        
-        // Check if the user has reached the threshold
+        clickCount++;
         if (clickCount >= 3) {
-            submitButton.disabled = false; // Enable the button
-            
-            // Make it look enabled
+            submitButton.disabled = false;
             submitButton.style.cursor = 'pointer';
-            submitButton.style.backgroundColor = '#4CAF50'; // A nice, inviting green
+            submitButton.style.backgroundColor = '#4CAF50';
             submitButton.style.color = 'white';
             submitButton.innerText = "Submit (I'm enabled!)";
         }
@@ -67,68 +96,64 @@ function registerClick() {
 }
 
 /**
+ * Checks if the UI is currently debouncing.
+ * @returns {boolean} True if clicks are disabled, false otherwise.
+ */
+function isDebouncing() {
+    return document.body.classList.contains('debouncing');
+}
+
+/**
  * Changes the day based on the inverted controls.
- * @param {number} amount - The amount to change the day by (-1 or 1).
  */
 function changeDay(amount) {
+    if (isDebouncing()) return; // Ignore click if debouncing
     currentDate.setDate(currentDate.getDate() + amount);
     updateDisplay();
-    registerClick(); // Register this click as a "try"
+    registerClick();
+    applyWorsening(); // Apply all bad UI effects
 }
 
 /**
  * Changes the month based on the inverted controls.
- * @param {number} amount - The amount to change the month by (-1 or 1).
  */
 function changeMonth(amount) {
+    if (isDebouncing()) return; // Ignore click if debouncing
     currentDate.setMonth(currentDate.getMonth() + amount);
     updateDisplay();
-    registerClick(); // Register this click as a "try"
+    registerClick();
+    applyWorsening(); // Apply all bad UI effects
 }
 
 /**
  * Called when the submit button is clicked.
- * Shows a random message *until* the threshold is met.
  */
 function submitDate() {
-    submitClickCount++; // Increment the submit "try" counter
+    submitClickCount++;
 
     if (submitClickCount < SUBMIT_THRESHOLD) {
-        // Not enough tries yet, show a random frustrating message
         const randomIndex = Math.floor(Math.random() * submitMessages.length);
         alert(submitMessages[randomIndex]);
     } else if (submitClickCount === SUBMIT_THRESHOLD) {
-        // Reached the threshold! Show the final message.
-        
-        // Get the current date string directly from the display
         const finalDate = dateDisplay.innerText; 
-        
-        // Show the congratulatory alert
         alert(`Congratulations! 🥳\n\nAfter all that, your birth date has been successfully set to:\n\n${finalDate}`);
         
-        // Final evil twist: disable the button again, permanently.
         submitButton.disabled = true;
         submitButton.style.cursor = 'not-allowed';
-        submitButton.style.backgroundColor = '#C0C0C0'; // Back to dull gray
+        submitButton.style.backgroundColor = '#C0C0C0';
         submitButton.style.color = '#555';
         submitButton.innerText = "Set (Forever)";
     } else {
-        // If they keep clicking the (now disabled) button
         alert("It's already set. You're done.");
     }
 }
 
 // --- PAGE INITIALIZATION ---
-
-// Wait for the page to be fully loaded before running JS
 document.addEventListener('DOMContentLoaded', (event) => {
-    // Assign the DOM elements to our global variables
     dateDisplay = document.getElementById('current-date');
     submitButton = document.getElementById('submit-btn');
+    mainContainer = document.getElementById('main-container');
 
-    // Ensure the button is disabled on page load
     submitButton.disabled = true; 
-    
-    // Set the initial date display
     updateDisplay();
 });
