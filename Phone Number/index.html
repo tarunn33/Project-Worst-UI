@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Entry</title>
+    <style>
+
+        /* --- Global & Font Styles --- */
+        :root {
+            --primary-color: #007aff; /* A clean, professional blue */
+            --danger-color: #d93025;
+            --warning-color: #ff9500;
+            --success-color: #34c759;
+            --light-bg: #f4f7f6;
+            --white-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+
+            margin: 0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh; /* Ensure it covers the full height */
+    
+            /* Dark background color */
+            background-color: #1a1a1a;
+    
+            /* Create repeating vertical lines */
+            background-image: repeating-linear-gradient(
+            to right, /* Lines go from left to right */
+      
+            #ff00cc 0px, #ff00cc 2px,  /* 2px Neon Pink line */
+            transparent 2px, transparent 10px, /* 8px transparent space */
+      
+            #00ffcc 10px, #00ffcc 12px, /* 2px Neon Cyan line */
+            transparent 12px, transparent 20px, /* 8px transparent space */
+      
+            #3333ff 20px, #3333ff 22px, /* 2px Neon Blue line */
+            transparent 22px, transparent 30px  /* 8px transparent space */
+      
+            /* The pattern repeats every 30px */
+
+            );
+
+        }
+
+        /* --- Main Application Container --- */
+        #app-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem 3rem;
+            width: 420px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            font-weight: 800;
+            text-shadow: 0 0 5px #04c1f5;
+        }
+
+        #timer {
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--danger-color);
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Phone Number Display --- */
+        #phone-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2rem; 
+            font-weight: bold;
+            letter-spacing: 0.75rem; /* Adjusted for single line */
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1rem 0; /* Removed side padding */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            color: #eae5e5;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+            text-align: center; /* Center the text */
+            overflow: hidden; /* Ensure no wrap */
+            white-space: nowrap; /* Ensure no wrap */
+        }
+
+        /* --- Digit Spinner --- */
+        #digit-spinner {
+            width: 100px;
+            height: 100px;
+            border: 3px solid var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 0 auto 2rem auto;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            color: var(--primary-color);
+        }
+
+        #digit-spinner:hover {
+            border-color: #0056b3;
+            background-color: #f5faff;
+        }
+
+        #digit-spinner.disabled {
+            background-color: #f4f4f4;
+            color: #aaa;
+            border-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- Buttons --- */
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 0.9rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            flex-grow: 1; /* Make buttons share space */
+        }
+
+        #reset-btn {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        #reset-btn:hover {
+            background-color: #e68600;
+        }
+
+        #submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #submit-btn:hover {
+            background-color: #0062cc;
+        }
+
+        #submit-btn:disabled {
+            background-color: #ccc;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* --- Inline Message Area --- */
+        #message {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            min-height: 1.2em; /* Reserve space */
+        }
+
+        .success { color: var(--success-color); }
+        .error { color: var(--danger-color); }
+
+        /* --- Custom Modal --- */
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modal-box {
+            background: var(--white-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1001;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.2s ease-out;
+        }
+        
+        #modal-overlay.visible {
+            display: flex;
+        }
+        #modal-overlay.visible #modal-box {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        #modal-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        #modal-message strong {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--primary-color);
+        }
+
+        #modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        
+        .modal-btn {
+            padding: 0.7rem 1.2rem;
+        }
+
+        #modal-yes-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        #modal-no-btn {
+            background-color: #eee;
+            color: #555;
+        }
+        #modal-ok-btn {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%; /* Full-width for single OK button */
+        }
+        
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <h1>Enter Your Phone Number</h1>
+        <div id="timer">00:00</div>
+        <div id="phone-display">__________</div>
+        <div id="digit-spinner" role="button" tabindex="0">0</div>
+        
+        <div class="buttons">
+            <button id="reset-btn">Reset</button>
+            <button id="submit-btn" disabled>Submit</button>
+        </div>
+        
+        <div id="message"></div>
+    </div>
+
+    <div id="modal-overlay">
+        <div id="modal-box">
+            <h2 id="modal-title">Confirm</h2>
+            <p id="modal-message">Are you sure?</p>
+            <div id="modal-buttons">
+                <button id="modal-no-btn" class="modal-btn">No</button>
+                <button id="modal-yes-btn" class="modal-btn">Yes</button>
+                <button id="modal-ok-btn" class="modal-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const timerEl = document.getElementById('timer');
+        const phoneDisplayEl = document.getElementById('phone-display');
+        const digitSpinnerEl = document.getElementById('digit-spinner');
+        const resetBtn = document.getElementById('reset-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageEl = document.getElementById('message');
+
+        // Modal DOM Elements
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalBox = document.getElementById('modal-box');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalButtons = document.getElementById('modal-buttons');
+        const modalYesBtn = document.getElementById('modal-yes-btn');
+        const modalNoBtn = document.getElementById('modal-no-btn');
+        const modalOkBtn = document.getElementById('modal-ok-btn');
+
+        // --- Game State Variables ---
+        let enteredNumber = "";
+        let currentDigit = 0;
+        let direction = 1;
+        let baseSpeed = 400;
+        let currentSpeed = baseSpeed;
+        
+        let timeLeft = 30; // This will be randomized in initGame
+
+        let spinnerInterval = null;
+        let timerInterval = null;
+        let gameActive = true;
+
+        // --- Modal State Variables ---
+        let confirmationStep = 0;
+        const confirmationMessages = [
+            "Are you sure you want to submit this number?",
+            "This action is permanent. Are you absolutely certain?",
+            "We will be sending 2FA codes to this number. Is this okay?",
+            "Final check. This is your number: ", // Number will be appended
+            "Really... one last time. Submit?"
+        ];
+
+        // --- Core Functions ---
+        function initGame() {
+            enteredNumber = "";
+            currentSpeed = baseSpeed;
+            
+            // Set a random time between 15 and 40 seconds
+            timeLeft = Math.floor(Math.random() * 26) + 15; 
+            
+            gameActive = true;
+            confirmationStep = 0;
+            
+            messageEl.textContent = "";
+            messageEl.className = "";
+            submitBtn.disabled = true;
+            resetBtn.disabled = false;
+            digitSpinnerEl.classList.remove('disabled');
+            hideModal();
+            
+            if (spinnerInterval) clearInterval(spinnerInterval);
+            if (timerInterval) clearInterval(timerInterval);
+
+            updatePhoneDisplay();
+            startSpinner();
+            startTimer(); // This function will now use the new random timeLeft
+        }
+
+        function startSpinner() {
+            if (spinnerInterval) clearInterval(spinnerInterval);
+
+            spinnerInterval = setInterval(() => {
+                if (Math.random() < 0.2) direction *= -1;
+                currentDigit += direction;
+                if (currentDigit > 9) currentDigit = 0;
+                if (currentDigit < 0) currentDigit = 9;
+                digitSpinnerEl.textContent = currentDigit;
+            }, currentSpeed);
+        }
+
+        function startTimer() {
+            // Update display immediately with the new random time
+            timerEl.textContent = `00:${String(timeLeft).padStart(2, '0')}`;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = `00:${String(timeLeft).padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            clearInterval(spinnerInterval);
+            clearInterval(timerInterval);
+            
+            digitSpinnerEl.classList.add('disabled');
+            submitBtn.disabled = true;
+            
+            // Use the modal for the "Time's Up" message
+            showModal(
+                "Time's Up!", 
+                "You ran out of time. Press Reset to try again.", 
+                'alert'
+            );
+        }
+
+        function updatePhoneDisplay() {
+            const display = enteredNumber.padEnd(10, '_');
+            phoneDisplayEl.textContent = display;
+        }
+
+        // --- Modal Functions ---
+        /**
+         * @param {'confirm' | 'alert'} type 
+         */
+        function showModal(title, message, type = 'confirm') {
+            modalTitle.textContent = title;
+            modalMessage.innerHTML = message; // Use innerHTML for strong tag in success
+
+            if (type === 'confirm') {
+                modalYesBtn.style.display = 'block';
+                modalNoBtn.style.display = 'block';
+                modalOkBtn.style.display = 'none';
+                modalButtons.style.justifyContent = 'flex-end';
+            } else if (type === 'alert') {
+                modalYesBtn.style.display = 'none';
+                modalNoBtn.style.display = 'none';
+                modalOkBtn.style.display = 'block';
+                modalButtons.style.justifyContent = 'center';
+            }
+
+            modalOverlay.classList.add('visible');
+        }
+
+        function hideModal() {
+            modalOverlay.classList.remove('visible');
+        }
+
+        // --- Event Handlers ---
+        function handleDigitClick() {
+            if (!gameActive) return;
+
+            enteredNumber += currentDigit;
+            updatePhoneDisplay();
+
+            currentSpeed = Math.max(50, currentSpeed * 0.85);
+            startSpinner();
+
+            if (enteredNumber.length === 10) {
+                gameActive = false;
+                clearInterval(spinnerInterval);
+                clearInterval(timerInterval);
+                
+                digitSpinnerEl.classList.add('disabled');
+                submitBtn.disabled = false;
+                messageEl.textContent = "Number complete! Ready to submit?";
+                messageEl.className = "success";
+            }
+        }
+
+        // Main submit button click
+        function handleSubmitClick() {
+            confirmationStep = 0;
+            // Special case for message with number
+            confirmationMessages[3] = "Final check. This is your number: " + enteredNumber + ". Correct?";
+            
+            showModal(
+                'Confirm Submission',
+                confirmationMessages[confirmationStep],
+                'confirm'
+            );
+        }
+
+        // "Yes" button in modal
+        function handleModalYes() {
+            confirmationStep++;
+            
+            if (confirmationStep < confirmationMessages.length) {
+                // Show next confirmation
+                modalMessage.textContent = confirmationMessages[confirmationStep];
+            } else {
+                // All confirmations passed!
+                submitBtn.disabled = true;
+                resetBtn.disabled = true;
+                
+                showModal(
+                    'Success!',
+                    `Congratulations! <br> Your number <strong>${enteredNumber}</strong> has been submitted.`,
+                    'alert'
+                );
+            }
+        }
+
+        // "No" button in modal
+        function handleModalNo() {
+            hideModal();
+            messageEl.textContent = "Submission cancelled.";
+            messageEl.className = "";
+        }
+
+        // "OK" button in modal (for alerts)
+        function handleModalOk() {
+            const title = modalTitle.textContent;
+            hideModal();
+            
+            if (title === 'Success!') {
+                // Auto-restart the game after a short delay
+                messageEl.textContent = "Restarting...";
+                messageEl.className = "";
+                setTimeout(initGame, 1500); // 1.5 second delay
+            }
+        }
+
+        // --- Initial Setup ---
+        digitSpinnerEl.addEventListener('click', handleDigitClick);
+        resetBtn.addEventListener('click', initGame);
+        submitBtn.addEventListener('click', handleSubmitClick);
+        
+        modalYesBtn.addEventListener('click', handleModalYes);
+        modalNoBtn.addEventListener('click', handleModalNo);
+        modalOkBtn.addEventListener('click', handleModalOk);
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                if (modalNoBtn.style.display === 'block' || modalOkBtn.style.display === 'block') {
+                    if(modalNoBtn.style.display === 'block') {
+                        handleModalNo();
+                    } else {
+                        handleModalOk();
+                    }
+                }
+            }
+        });
+
+        // Start the game on page load
+        initGame();
+    </script>
+
+</body>
+</html>
