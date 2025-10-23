@@ -3,40 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volume Control Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Volume Controler</title>
+    <style>
+        body {
+            transition: background-color 0.1s;
+        }
+        
+        body {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}
+
+        .fail-flash {
+            animation: flash-red 0.3s 1;
+        }
+        @keyframes flash-red {
+            0%, 100% { background-color: #f0f2f5; }
+            50% { background-color: #ffe0e0; }
+        }
+
+        .pump-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 3px solid #ccc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #d9534f;
+        }
+
+        #volumeContainer {
+            width: 100%;
+            height: 60px;
+            margin: 1rem 0 0 0;
+            border: 3px solid #b0b0b0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e0e0e0 50%, #5cb85c 50.1%);
+            background-size: 250% 250%;
+            background-position: 0% 0%; 
+            transition: background-position 0.1s linear, border-color 0.3s;
+        }
+
+        #pipe {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(to right, #888, #aaa, #888);
+            margin: 0 auto;
+            border: 2px solid #555;
+            border-top: none;
+            border-bottom: none;
+            box-shadow: inset 0 3px 4px rgba(0,0,0,0.2);
+        }
+
+        #pistonCylinder {
+            width: 60px;
+            height: 80px;
+            margin: 0 auto;
+            margin-top: -2px;
+            background: #444;
+            border: 10px solid #777;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 1;
+        }
+        
+        #pumpJack {
+            width: 250px;
+            height: 150px;
+            position: relative;
+            user-select: none;
+            z-index: 2;
+            transform: scale(0.75);
+            margin: -80px auto -35px;
+        }
+
+        #pumpBase {
+            width: 100px;
+            height: 70px;
+            border-left: 20px solid #666;
+            border-right: 20px solid #666;
+            border-top: 10px solid #666;
+            box-sizing: border-box;
+            position: absolute;
+            bottom: 0;
+            left: calc(50% - 50px);
+            border-radius: 5px 5px 0 0;
+        }
+        #walkingBeam {
+            width: 240px;
+            height: 20px;
+            background: linear-gradient(to bottom, #d9534f, #a94442);
+            position: absolute;
+            left: 5px;
+            top: 45px;
+            border: 3px solid #888;
+            border-radius: 8px;
+            z-index: 4;
+            cursor: pointer;
+            transform-origin: 105px 50%;
+            transition: transform 0.2s ease-out, filter 0.2s;
+        }
+        
+        #walkingBeam.jammed {
+            filter: grayscale(1) brightness(0.8);
+            cursor: not-allowed;
+        }
+        
+        #beamHead {
+            width: 40px;
+            height: 30px;
+            background: #777;
+            position: absolute;
+            left: -15px;
+            top: -5px;
+            border-radius: 10px 10px 0 0;
+            border: 3px solid #555;
+            transform: rotate(-15deg);
+        }
+        #beamCounterweight {
+            width: 50px;
+            height: 40px;
+            background: #777;
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            border-radius: 8px;
+            border: 3px solid #555;
+        }
+        #beamPivot {
+            width: 25px;
+            height: 25px;
+            background: #bbb;
+            border-radius: 50%;
+            border: 3px solid #555;
+            position: absolute;
+            top: 40px;
+            left: 95px;
+            z-index: 5;
+        }
+        #pistonRod {
+            width: 8px;
+            height: 60px;
+            background: #aaa;
+            border: 2px solid #777;
+            position: absolute;
+            top: 55px;
+            left: 20px;
+            z-index: 3;
+            transform-origin: top center;
+            transition: transform 0.2s ease-out;
+        }
+        #pumpText {
+            display: block;
+            margin-top: 10px;
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .pumping #walkingBeam { transform: rotate(20deg); }
+        .pumping #pistonRod { transform: rotate(-12deg) scaleY(1.2); }
+        .full { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97); }
+        .empty { border-color: #d9534f; animation: pulse-red 1s infinite; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+            40%, 60% { transform: translate3d(3px, 0, 0); }
+        }
+        @keyframes pulse-red {
+            0% { border-color: #d9534f; }
+            50% { border-color: #ffb8b6; }
+            100% { border-color: #d9534f; }
+        }
+    </style>
 </head>
 <body>
 
-    <div id="game-area">
-        </div>
+    <div class="pump-container" id="pumpContainer">
+        <h2 id="title">THE LEAKY PUMP</h2>
+        <p><b>WARNING:</b> Volume is constantly deflating. Keep pumping!</p>
+        <p id="subtitle">It's pointless.</p>
 
-    <div id="ui-container">
-        <h1>Volume Control</h1>
-        <p>Click any number to set the volume!</p>
-        <p>Avoid the bombs!</p>
-        <div class="volume-info">
-            <strong>Current Volume:</strong>
-            <span id="current-volume">0</span>
+        <div id="volumeContainer"></div>
+
+        <div id="pipe"></div>
+        <div id="pumpJack">
+            <div id="pistonRod"></div>
+            <div id="pumpBase"></div>
+            <div id="walkingBeam">
+                <div id="beamHead"></div>
+                <div id="beamCounterweight"></div>
+            </div>
+            <div id="beamPivot"></div>
         </div>
-        <button id="start-button">Start Game</button>
+        <div id="pistonCylinder"></div>
+        <span id="pumpText">PUMP!</span>
     </div>
 
-    <audio 
-        id="audio-player" 
-        loop 
-        src="https://www.soundjay.com/nature/sounds/river-1.mp3">
-    </audio>
+    <script>
+        // --- Get Elements ---
+        const volumeContainer = document.getElementById('volumeContainer');
+        const pumpJack = document.getElementById('pumpJack');
+        const walkingBeam = document.getElementById('walkingBeam');
+        const subtitle = document.getElementById('subtitle');
 
-    <div id="game-over-screen" class="hidden">
-        <div class="game-over-box">
-            <h2>Game Over!</h2>
-            <button id="try-again-button">Try Again</button>
-        </div>
-    </div>
+        // --- Set Parameters ---
+        let currentVolume = 30;
+        let isJammed = false;
+        const pumpAmount = 10;
+        const slipPenalty = 20;
+        const slipChance = 0.15;
+        const jamDuration = 2000;
+        
+        const baseDecayRate = 1;
+        const baseDecayInterval = 150;
+        
+        const taunts = [
+            "You'll never keep it full.",
+            "Is that all you've got?",
+            "Sisyphus had it easy.",
+            "Faster! ...or don't, whatever.",
+            "I can see the leak from here.",
+            "Pathetic.",
+            "Almost... just kidding.",
+            "This is a waste of your time."
+        ];
 
-    <div id="notification-container"></div>
+        // --- Audio Setup ---
+        let audioCtx;
+        let audioInitialized = false;
+        let leakNoise, leakGain;
 
-    <script src="script.js"></script>
+        function setupAudio() {
+            if (audioInitialized) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            leakNoise = audioCtx.createBufferSource();
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            let data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            leakNoise.buffer = buffer;
+            leakNoise.loop = true;
+            
+            leakGain = audioCtx.createGain();
+            leakGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            
+            leakNoise.connect(leakGain).connect(audioCtx.destination);
+            leakNoise.start();
+            
+            audioInitialized = true;
+        }
+
+        function playPumpSound() {
+            if (!audioCtx) return;
+            // Clank
+            const o1 = audioCtx.createOscillator();
+            const g1 = audioCtx.createGain();
+            o1.type = 'triangle';
+            o1.frequency.setValueAtTime(800, audioCtx.currentTime);
+            o1.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+            g1.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            g1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            o1.connect(g1).connect(audioCtx.destination);
+            o1.start();
+            o1.stop(audioCtx.currentTime + 0.1);
+            
+            // Squish
+            const o2 = audioCtx.createOscillator();
+            const g2 = audioCtx.createGain();
+            o2.type = 'sawtooth';
+            o2.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.05);
+            o2.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.15);
+            g2.gain.setValueAtTime(0.2, audioCtx.currentTime + 0.05);
+            g2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            o2.connect(g2).connect(audioCtx.destination);
+            o2.start(audioCtx.currentTime + 0.05);
+            o2.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function playFailSound() {
+            if (!audioCtx) return;
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.type = 'square';
+            g.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            o.frequency.setValueAtTime(150, audioCtx.currentTime);
+            o.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            o.start(audioCtx.currentTime);
+            o.stop(audioCtx.currentTime + 0.25);
+        }
+
+        // --- Update Functions ---
+        function updateVolumeVisual() {
+            const pos = currentVolume;
+            volumeContainer.style.backgroundPosition = `${pos}% ${pos}%`;
+        }
+
+        function updateLeakSound() {
+            if (!leakGain) return;
+            const newGain = (currentVolume / 100) * 0.2;
+            leakGain.gain.linearRampToValueAtTime(newGain, audioCtx.currentTime + 0.1);
+        }
+        
+        function updateTaunt() {
+            subtitle.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+        }
+
+        // --- Pumping Logic (CHANGED) ---
+        function pump() {
+            if (isJammed) return;
+
+            if (!audioInitialized) {
+                setupAudio();
+            }
+            volumeContainer.classList.remove('empty');
+            
+            if (Math.random() < slipChance) {
+                // FAIL!
+                playFailSound();
+                currentVolume = Math.max(currentVolume - slipPenalty, 0);
+                document.body.classList.add('fail-flash');
+                
+                isJammed = true;
+                walkingBeam.classList.add('jammed');
+                
+                setTimeout(() => {
+                    document.body.classList.remove('fail-flash');
+                    isJammed = false;
+                    walkingBeam.classList.remove('jammed');
+                }, jamDuration);
+                
+                // * NEW: Update sound because volume is decreasing
+                updateLeakSound();
+
+            } else {
+                // SUCCESS
+                currentVolume = Math.min(currentVolume + pumpAmount, 100);
+                playPumpSound();
+                
+                // * NEW: Silence the leak sound because volume is increasing
+                if (leakGain) leakGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.05);
+
+                pumpJack.classList.add('pumping');
+                setTimeout(() => {
+                    pumpJack.classList.remove('pumping');
+                }, 200);
+            }
+
+            updateVolumeVisual();
+            // * REMOVED updateLeakSound() from here
+            
+            if (currentVolume === 100) {
+                volumeContainer.classList.add('full');
+                setTimeout(() => {
+                    volumeContainer.classList.remove('full');
+                }, 400);
+            }
+        }
+
+        // --- Deflating Logic (CHANGED) ---
+        function deflate() {
+            let currentDecayRate = baseDecayRate;
+            
+            if (currentVolume > 70) {
+                currentDecayRate = baseDecayRate * 2;
+            }
+            
+            currentVolume = Math.max(currentVolume - currentDecayRate, 0);
+            updateVolumeVisual();
+            
+            // * NEW: This is now the only place the leak sound is
+            // * consistently turned ON (when volume is decreasing)
+            updateLeakSound(); 
+            
+            if (currentVolume === 0 && !volumeContainer.classList.contains('empty')) {
+                volumeContainer.classList.add('empty');
+                playFailSound();
+            }
+        }
+
+        // --- Event Listeners ---
+        walkingBeam.addEventListener('click', pump);
+        
+        // --- Intervals ---
+        setInterval(deflate, baseDecayInterval);
+        setInterval(updateTaunt, 3000);
+
+        // --- Initial Setup ---
+        updateVolumeVisual();
+        if (currentVolume === 0) {
+            volumeContainer.classList.add('empty');
+        }
+    </script>
+
 </body>
 </html>
