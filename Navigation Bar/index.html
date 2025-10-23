@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-K8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Bar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* Insane animated background */
+        @keyframes colorRave {
+            0% { background-color: red; }
+            15% { background-color: orange; }
+            30% { background-color: yellow; }
+            45% { background-color: green; }
+            60% { background-color: blue; }
+            75% { background-color: indigo; }
+            90% { background-color: violet; }
+            100% { background-color: red; }
+        }
+
+        body {
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            color: yellow;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            /* Constant "wait" cursor for no reason */
+            cursor: wait;
+            /* THE RAVE */
+            animation: colorRave 1.5s linear infinite;
+        }
+
+        header {
+            width: 100%;
+            background-color: black;
+            border-bottom: 10px dotted cyan;
+            padding: 10px;
+        }
+
+        marquee {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: lime;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 20px;
+            background-color: fuchsia;
+            border: 10px groove orange;
+            padding: 15px;
+            text-align: center;
+            /* Even more crooked */
+            transform: rotate(-2.5deg) scale(1.05);
+            z-index: 10;
+        }
+
+        .navbar ul {
+            list-style-image: url('data:image/gif;base64,R0lGODlhCwALAIAAAAAA3/8yH5BAEAAAEALAAAAAALABYAAAIkhI+py+0Po5y02ouz3rz7D4biSJbmiaYphqLkuLq62/8vZwYA'); /* Missing image */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap; /* For maximum chaos on small screens */
+        }
+
+        .navbar li {
+            margin: 10px;
+            /* Make them "vibrate" on hover */
+            transition: transform 0.05s linear;
+        }
+        .navbar li:hover {
+            transform: translate(3px, -2px) rotate(5deg);
+        }
+
+        .nav-button {
+            background-color: cyan;
+            border: 4px outset purple;
+            color: black;
+            padding: 10px 15px;
+            font-size: 1.2em;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            cursor: crosshair; /* Why not? */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            transition: transform 0.1s;
+        }
+
+        /* Inconsistent icon styling */
+        .nav-button .fa-home { font-size: 2em; color: red; }
+        .nav-button .fa-user { font-size: 1.5em; color: blue; }
+        .nav-button .fa-cog { font-size: 2.5em; color: green; }
+        .nav-button .fa-envelope { font-size: 1.2em; color: orange; }
+        .nav-button .fa-camera { font-size: 2.2em; color: darkviolet; }
+        .nav-button .fa-gamepad { font-size: 1.8em; color: teal; }
+
+        .content {
+            padding: 50px;
+            font-size: 1.5em;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3); /* Make text harder to read */
+        }
+
+        /* Blinking text */
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .blinking-header {
+            animation: blink 0.5s linear infinite;
+            font-size: 1.5em;
+            color: white;
+            text-shadow: 2px 2px #FF0000;
+        }
+
+        /* The Riddle Modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background-image: url("https://www.transparenttextures.com/patterns/diagmonds.png"); /* Annoying background texture */
+            background-color: #FFFF99; /* Sickly yellow */
+            border: 10px dotted red;
+            padding: 20px;
+            box-shadow: 0 0 50px 20px magenta;
+            text-align: center;
+            color: black;
+            cursor: cell; /* Another useless cursor */
+        }
+
+        /* Shake animation for wrong answers */
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0); }
+            20% { transform: translate(-53%, -48%) rotate(-5deg); }
+            40% { transform: translate(-48%, -52%) rotate(5deg); }
+            60% { transform: translate(-52%, -50%) rotate(-3deg); }
+            80% { transform: translate(-50%, -49%) rotate(3deg); }
+        }
+
+        .modal.shake {
+            animation: shake 0.5s linear;
+        }
+
+        #riddle-text {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-family: "Papyrus", fantasy; /* Oh yes. */
+            color: #330066; /* Horrible color */
+        }
+
+        #riddle-answer {
+            width: 90%;
+            padding: 10px;
+            font-size: 1.2em;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            border: 3px solid fuchsia;
+            background-color: rgba(255, 255, 255, 0.5); /* Hard to see */
+            color: #ccc; /* Hard to see */
+        }
+        #riddle-answer:focus {
+            color: black; /* Only readable on focus */
+        }
+
+        #riddle-submit {
+            background-color: lime;
+            border: 5px outset green;
+            color: black;
+            font-size: 1.5em;
+            padding: 10px 30px;
+            margin-top: 20px;
+            cursor: progress; /* And another! */
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+        }
+
+        #riddle-timer {
+            font-size: 2em;
+            color: red;
+            font-weight: bold;
+        }
+        
+        /* The impossible close button */
+        .close-button {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            font-size: 0.8em; /* Make it tiny */
+            color: #aaa;
+            cursor: help; /* Even the cursor is wrong */
+            padding: 1px;
+            transition: transform 0.1s linear;
+        }
+        .close-button:hover {
+            color: red;
+            font-weight: bold;
+            transform: scale(0.8) translate(10px, -10px); /* It runs away! */
+        }
+
+        /* Red flash of failure */
+        #failure-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: red;
+            z-index: 999;
+            display: none;
+            opacity: 0.7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="failure-flash"></div>
+
+    <header>
+        <marquee><h1>WELCOME 2 THE ABSOLUTE WEBSITE ON EARTH!!!</h1></marquee>
+    </header>
+
+    <nav class="navbar">
+        <ul>
+            <li><button class="nav-button" data-page="Home"><i class="fas fa-home"></i><span>Home</span></button></li>
+            <li><button class="nav-button" data-page="Profile"><i class="fas fa-user"></i><span>Profile</span></button></li>
+            <li><button class="nav-button" data-page="Settings"><i class="fas fa-cog"></i><span>Settings</span></button></li>
+            <li><button class="nav-button" data-page="Contact"><i class="fas fa-envelope"></i><span>Contact</span></button></li>
+            <li><button class="nav-button" data-page="Gallery"><i class="fas fa-camera"></i><span>Gallery</span></button></li>
+            <li><button class="nav-button" data-page="Games"><i class="fas fa-gamepad"></i><span>Games</span></button></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h4 class="blinking-header">Try to navigate. I double dare you.</h4>
+        <p>Loading... Please Wait... (Forever)</p>
+    </div>
+
+    <div id="riddle-modal" class="modal">
+        <span class="close-button" id="close-modal">&times;</span>
+        <h2>A RIDDLE HAS CHALLENGED YOU!</h2>
+        <p>ARE YOU SMART ENUF FOR THIS WEBSITE??</p>
+        <p>Answer in 15 seconds or be BANISHED!</p>
+        
+        <div id="riddle-timer">15</div>
+
+        <p id="riddle-text">Riddle goes here...</p>
+        <input type="text" id="riddle-answer" placeholder="Put your dumb guess here...">
+        <button id="riddle-submit">SOLVE... OR ELSE!</button>
+        <p id="error-message" style="color: red; font-weight: bold; display: none;"></p>
+    </div>
+
+    <script>
+        // --- Riddle Database ---
+        // Answers are stored as strings. We will handle case-sensitivity.
+        const riddles = [
+            // Standard
+            { riddle: "I have cities, but no houses; forests, but no trees; and water, but no fish. What am I?", answer: "map" },
+            { riddle: "What has to be broken before you can use it?", answer: "egg" },
+            { riddle: "What is full of holes but still holds water?", answer: "sponge" },
+            { riddle: "What gets wetter as it dries?", answer: "towel" },
+            { riddle: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo" },
+            { riddle: "What word is spelled wrong in every dictionary?", answer: "wrong" },
+            
+            // Mathematical / Tricky
+            { riddle: "I am an odd number. Take away a letter, and I become even. What number am I?", answer: "seven" },
+            { riddle: "What is half of 2 + 2?", answer: "3" }, //  (2/2) + 2 = 3
+            { riddle: "A grandfather, two fathers, and two sons bought 3 movie tickets. How is this possible?", answer: "there are only 3 people" }, // Grandfather (is a father), Father (is a son), Son
+            { riddle: "What is the next number in this sequence: 1, 11, 21, 1211, 111221, ...?", answer: "312211" }, // Look-say sequence
+            { riddle: "What is the answer to this question? (hint: 6 letters)", answer: "answer" },
+            { riddle: "If you multiply me by any other number, the answer is always the same. What am I?", answer: "0" },
+            
+            // Annoying / Case-Sensitive
+            { riddle: "What is the capital of France? (Must be capitalized!)", answer: "Paris", caseSensitive: true },
+            { riddle: "How many months have 28 days?", answer: "twelve" },
+            { riddle: "Enter password..", answer: "password" }
+        ];
+
+        // --- DOM Elements ---
+        const modal = document.getElementById('riddle-modal');
+        const riddleText = document.getElementById('riddle-text');
+        const riddleAnswer = document.getElementById('riddle-answer');
+        const riddleSubmit = document.getElementById('riddle-submit');
+        const closeModal = document.getElementById('close-modal');
+        const errorMessage = document.getElementById('error-message');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const failureFlash = document.getElementById('failure-flash');
+        const timerDisplay = document.getElementById('riddle-timer');
+
+        // --- State Variables ---
+        let currentRiddleIndex = -1;
+        let targetPage = ""; // Stores which page the user *wants* to go to
+        let riddleTimer; // Holds the interval for the timer
+        let timeLeft = 15;
+
+        // --- Functions ---
+        
+        function getNewRiddle() {
+            let newIndex = Math.floor(Math.random() * riddles.length);
+            while (newIndex === currentRiddleIndex) {
+                newIndex = Math.floor(Math.random() * riddles.length);
+            }
+            currentRiddleIndex = newIndex;
+            
+            riddleText.textContent = riddles[currentRiddleIndex].riddle;
+            riddleAnswer.value = ""; // Clear old answer
+            errorMessage.style.display = 'none'; // Hide error
+        }
+
+        function startTimer() {
+            timeLeft = 15;
+            timerDisplay.textContent = timeLeft;
+            
+            // Clear any old timers
+            clearInterval(riddleTimer); 
+
+            riddleTimer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(riddleTimer);
+                    hideModal();
+                    alert("TOO SLOW! 🐢");
+                }
+            }, 1000);
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+            clearInterval(riddleTimer); // Stop the timer
+        }
+        
+        function openRiddleModal(event) {
+            targetPage = event.currentTarget.dataset.page;
+            getNewRiddle();
+            modal.style.display = 'block';
+            startTimer(); // Start the timer!
+        }
+
+        function failAnswer() {
+            // 1. Show error message
+            errorMessage.textContent = "WRONG! SO WRONG! TRY A NEW RIDDLE, 'GENIUS'!";
+            errorMessage.style.display = 'block';
+            
+            // 2. Trigger shake animation
+            modal.classList.add('shake');
+            
+            // 3. Trigger red flash
+            failureFlash.style.display = 'block';
+            
+            // 4. Get a new riddle
+            getNewRiddle();
+            
+            // 5. Reset timer
+            startTimer();
+            
+            // 6. Remove animations after they finish
+            setTimeout(() => {
+                modal.classList.remove('shake');
+                failureFlash.style.display = 'none';
+            }, 500);
+        }
+
+        function checkAnswer() {
+            const currentRiddle = riddles[currentRiddleIndex];
+            const correctAnswer = currentRiddle.answer;
+            let userAnswer = riddleAnswer.value.trim();
+            
+            // Check if we need to respect case
+            if (!currentRiddle.caseSensitive) {
+                userAnswer = userAnswer.toLowerCase();
+            }
+
+            if (userAnswer === correctAnswer) {
+                // SUCCESS!
+                hideModal();
+                alert(`🎉 CONGRATULATIONS! 🎉\nYou are a true GENIUS! (Really??)\nYou have proven yourself worthy to access the...\n\n--- ${targetPage.toUpperCase()} PAGE ---`);
+            } else {
+                // FAILURE!
+                failAnswer();
+            }
+        }
+
+        // --- Event Listeners ---
+        
+        navButtons.forEach(button => {
+            button.addEventListener('click', openRiddleModal);
+        });
+
+        riddleSubmit.addEventListener('click', checkAnswer);
+        
+        riddleAnswer.addEventListener('keyup', function(event) {
+            if (event.key === "Enter") {
+                checkAnswer();
+            }
+        });
+
+        closeModal.addEventListener('click', hideModal);
+
+    </script>
+
+</body>
+</html>
