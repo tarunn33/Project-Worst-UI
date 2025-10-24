@@ -259,25 +259,57 @@
         // Answers are stored as strings. We will handle case-sensitivity.
         const riddles = [
             // Standard
-            { riddle: "I have cities, but no houses; forests, but no trees; and water, but no fish. What am I?", answer: "map" },
-            { riddle: "What has to be broken before you can use it?", answer: "egg" },
-            { riddle: "What is full of holes but still holds water?", answer: "sponge" },
-            { riddle: "What gets wetter as it dries?", answer: "towel" },
-            { riddle: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo" },
-            { riddle: "What word is spelled wrong in every dictionary?", answer: "wrong" },
-            
-            // Mathematical / Tricky
-            { riddle: "I am an odd number. Take away a letter, and I become even. What number am I?", answer: "seven" },
-            { riddle: "What is half of 2 + 2?", answer: "3" }, //  (2/2) + 2 = 3
-            { riddle: "A grandfather, two fathers, and two sons bought 3 movie tickets. How is this possible?", answer: "there are only 3 people" }, // Grandfather (is a father), Father (is a son), Son
-            { riddle: "What is the next number in this sequence: 1, 11, 21, 1211, 111221, ...?", answer: "312211" }, // Look-say sequence
-            { riddle: "What is the answer to this question? (hint: 6 letters)", answer: "answer" },
-            { riddle: "If you multiply me by any other number, the answer is always the same. What am I?", answer: "0" },
-            
-            // Annoying / Case-Sensitive
-            { riddle: "What is the capital of France? (Must be capitalized!)", answer: "Paris", caseSensitive: true },
+            { riddle: "What has four fingers and a thumb, but is not living?", answer: "glove" },
+            { riddle: "What starts with T, ends with T, and has T in it?", answer: "teapot" },
+            { riddle: "What kind of ship has two mates but no captain?", answer: "relationship" },
+            { riddle: "Ask this question all day long, but always get completely different answers, and yet all the answers will be correct. What is the question?", answer: "What time is it?" },
+            { riddle: "What loses its head in the morning but gets it back at night?", answer: "pillow" },
+            { riddle: "Four cars come to a four-way stop, each coming from a different direction. They can't decide who got there first, so they all go forward at the same time. All four cars go, but none crash into each other. How is this possible?", answer: "They all made right hand turns" },
+            { riddle: "I have a head like a cat and feet like a cat, but I am not a cat. What am I?", answer: "kitten" },
+            { riddle: "Who makes it, has no need of it. Who buys it, has no use for it. Who uses it can neither see nor feel it. What is it?", answer: "coffin" },
+            { riddle: "What has hands but cannot clap?", answer: "clock" },
+            { riddle: "Paul's height is six feet, he's an assistant at a butcher's shop, and wears size 9 shoes. What does he weigh?", answer: "meat" },
+            { riddle: "Poor people have it. Rich people need it. If you eat it you die. What is it?", answer: "nothing" },
+            { riddle: "What is the longest word in the dictionary?", answer: "smile" },
+            { riddle: "Throw away the outside and cook the inside, then eat the outside and throw away the inside. What is it?", answer: "corn" },
+            { riddle: "What is at the end of a rainbow?", answer: "w" },
+            { riddle: "What kind of tree can you carry in your hand?", answer: "palm" },
+            { riddle: "They come out at night without being called, and are lost in the day without being stolen. What are they?", answer: "stars" },
+            { riddle: "What is always in front of you, but can't be seen?", answer: "future" },
+            { riddle: "You'll find me in Mercury, Earth, Mars, Jupiter, Saturn and Uranus. But never Neptune, or Venus. What am I?", answer: "r" },
             { riddle: "How many months have 28 days?", answer: "twelve" },
-            { riddle: "Enter password..", answer: "password" }
+            { riddle: "I can be cracked, made, told and played. What am I?", answer: "joke" },
+            { riddle: "I cannot talk, but I always reply when spoken to. What am I?", answer: "echo" },
+            { riddle: "A man goes out for a walk during a storm with nothing to protect him from the rain. He doesn't have a hat, a hood or an umbrella. But by the end of his walk, there isn't a single wet hair on his head. Why doesn't the man have wet hair?", answer: "he is bald" },
+            { riddle: "I love to dance and twist. I shake my tail as I sail away. When I fly wingless into the sky. What am I?", answer: "kite" },
+            { riddle: "When you stop to look, you can always see me. But if you try to touch me, you can never feel me. Although you walk towards me, I remain the same distance from you. What am I?", answer: "horizon" },
+            { riddle: "What is it that no one wants to have, but no one wants to lose either?", answer: "lawsuit" },
+            { riddle: "I welcome the day with a show of light, I stealthily came here in the night.I bathe the earthy stuff at dawn, But by noon, alas! I'm gone.", answer: "dew" },
+            { riddle: "What goes through cities and fields, but never moves?", answer: "road" },
+            { riddle: "What can be touched but can't be seen?", answer: "heart" },
+            { riddle: "When it is alive we sing, when it is dead we clap our hands. What is it?", answer: "birthday candle" },
+            { riddle: "What can go through glass without breaking it?", answer: "light" },
+            { riddle: "What gets bigger the more you take away?", answer: "hole" },
+            { riddle: "I have no life, but I can die. What am I?", answer: "battery" },
+            { riddle: "What kind of room has no walls, door or windows?", answer: "mushroom" },
+            { riddle: "It belongs to you, but your friends use it more. What is it?", answer: "name" },
+            { riddle: "What two things can you never eat for breakfast?", answer: "lunch and dinner" },
+            { riddle: "I make a loud sound when I am changing. When I do change, I get bigger but weigh less. What am I?", answer: "popcorn" },
+            { riddle: "I am orange, I wear a green hat and I sound like a parrot. What am I?", answer: "carrot" },
+            { riddle: "What runs all around a backyard, yet never moves?", answer: "fence" },
+            { riddle: "Take off my skin — I won't cry, but you will! What am I?", answer: "onion" },
+            { riddle: "What invention lets you look right through a wall?", answer: "window" },
+            { riddle: "What is always on its way but never arrives?", answer: "tomorrow" },
+            { riddle: "What has a bottom at the top?", answer: "legs" },
+            { riddle: "What has many teeth but cannot bite?", answer: "comb" },
+            { riddle: "What has branches, but no fruit, trunk or leaves?", answer: "bank" },
+            { riddle: "What thrives when you feed it but dies when you water it?", answer: "fire" },
+            { riddle: "What do you buy to eat but never consume?", answer: "cutlery" },
+            { riddle: "Where is the only place where today comes before yesterday?", answer: "dictionary" },
+            { riddle: "What can you put in a bucket to make it weigh less?", answer: "hole" },
+            { riddle: "What is black when it's clean and white when it's dirty?", answer: "blackboard" },
+            { riddle: "I have one eye but am unable to see. What am I?", answer: "needle" },
+            { riddle: "What word becomes shorter when you add two letters to it?", answer: "short", caseSensitive: true }
         ];
 
         // --- DOM Elements ---
@@ -405,4 +437,5 @@
     </script>
 
 </body>
+
 </html>
