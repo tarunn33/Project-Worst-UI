@@ -90,7 +90,7 @@ function registerClick() {
             submitButton.style.cursor = 'pointer';
             submitButton.style.backgroundColor = '#4CAF50';
             submitButton.style.color = 'white';
-            submitButton.innerText = "Submit (I'm enabled!)";
+            submitButton.innerText = "Submit";
         }
     }
 }
@@ -157,3 +157,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
     submitButton.disabled = true; 
     updateDisplay();
 });
+
