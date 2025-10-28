@@ -13,7 +13,7 @@ body {
     overflow-x: hidden;
 }
 
-/* --- KEYFRAME ANIMATIONS (Unchanged) --- */
+/* --- KEYFRAME ANIMATIONS --- */
 @keyframes moveBackground {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -44,14 +44,11 @@ body {
     animation-delay: 0.2s;
 }
 
-/* --- HEADER (Updated for Professional Look) --- */
+/* --- HEADER --- */
 header {
     width: 100%;
     background-color: #1a1a1a;
-    
-    /* 1. More "breathing room" */
-    padding: 25px 50px; /* Increased padding */
-    
+    padding: 25px 50px; 
     display: flex;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -61,31 +58,25 @@ header {
 }
 
 .logo {
-    /* Slightly larger logo to match title */
     width: 48px;
     height: 48px;
-    margin-right: 20px; /* More space between logo and title */
+    margin-right: 20px;
 }
 
 .team-name {
-    /* 2. Increased size */
-    font-size: 2.75rem; /* Significantly larger */
+    font-size: 2.75rem;
     font-weight: 700;
     margin: 0;
-    
-    /* Tighter letter spacing for a pro look */
     letter-spacing: -0.02em; 
-    
-    /* 3. Subtle gradient "sheen" for text */
     background: linear-gradient(145deg, #ffffff 60%, #c0c0c0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-emphasis-color: transparent;
+    text-fill-color: transparent;
 }
 
 
-/* --- MAIN CONTENT (Unchanged) --- */
+/* --- MAIN CONTENT --- */
 main {
     flex: 1;
     display: flex;
@@ -96,7 +87,7 @@ main {
     box-sizing: border-box;
 }
 
-/* --- BUTTON CONTAINER (Unchanged) --- */
+/* --- BUTTON CONTAINER --- */
 .button-container {
     background-color: #2d2d2d;
     border: 1px solid #444;
@@ -104,9 +95,10 @@ main {
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     display: grid;
+    /* Updated grid to handle 4 columns on wide screens */
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 22px;
-    max-width: 700px;
+    max-width: 900px; /* Increased max-width for more buttons */
     width: 100%;
 }
 .container-heading {
@@ -121,7 +113,7 @@ main {
     text-transform: uppercase;
 }
 
-/* --- BUTTONS (Unchanged) --- */
+/* --- BUTTONS --- */
 .attractive-button {
     display: flex;
     align-items: center;
@@ -145,6 +137,8 @@ main {
     margin-right: 12px;
     transition: transform 0.3s ease;
 }
+
+/* --- Individual Button Colors --- */
 #btn-volume {
     background-image: linear-gradient(to right, #00c6ff, #0072ff, #00c6ff);
 }
@@ -163,6 +157,17 @@ main {
 #btn-submit {
     background-image: linear-gradient(to right, #11998e, #38ef7d, #11998e);
 }
+
+/* --- NEW BUTTON COLORS --- */
+#btn-progress {
+    background-image: linear-gradient(to right, #DA22FF, #9D60FF, #DA22FF);
+}
+#btn-checkbox {
+    background-image: linear-gradient(to right, #08AEEA, #2AF598, #08AEEA);
+}
+
+
+/* --- HOVER & ACTIVE ANIMATIONS --- */
 .attractive-button:hover {
     background-position: right center;
     transform: translateY(-5px);
