@@ -1,0 +1,224 @@
+/* General Setup */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background: linear-gradient(to bottom, #aed6f1 0%, #d6eaf8 70%, #6dd5ed 100%);
+    padding-top: 50px;
+    cursor: none; /* Hide the REAL cursor */
+    user-select: none;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    position: relative;
+}
+
+h2 {
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    margin-bottom: 5px;
+}
+
+p {
+    color: #34495e;
+    font-size: 1.1em;
+    margin-bottom: 40px;
+}
+
+.progress-container {
+    width: 70%;
+    height: 60px;
+    background-color: #ecf0f1;
+    border: 5px solid #bdc3c7;
+    border-radius: 30px;
+    margin: 50px auto;
+    position: relative;
+    overflow: visible; /* Make sure droplets can fall out */
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    margin-bottom: 300px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, #6dd5ed, #2193b0);
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 25px;
+    transition: width 0.1s linear;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+.fill-hole {
+    width: 30px;
+    height: 30px;
+    background: #333;
+    border: 4px solid #95a5a6;
+    border-radius: 50%;
+    position: absolute;
+    top: -19px;
+    left: 30%;
+    z-index: 15;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.fill-hole::before {
+    content: '';
+    position: absolute;
+    bottom: calc(50% - 2px);
+    left: calc(50% - 7px);
+    width: 14px;
+    height: 20px;
+    background: #95a5a6;
+    border: 2px solid #7f8c8d;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    bottom: 50%;
+    z-index: -1;
+}
+
+/* --- River Container --- */
+.river-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+    z-index: 5;
+    clip-path: url(#river-curve);
+    -webkit-clip-path: url(#river-curve);
+}
+
+.river-background {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #6dd5ed 0%, #2193b0 100%);
+    z-index: 1;
+}
+
+/* --- UPDATED: River Bed --- */
+.river-bed {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    /* REPLACED image URLs with a simple gradient */
+    background: linear-gradient(to top, #4a3e2c, #7a6a4f);
+    opacity: 0.3; /* Makes it look submerged */
+    z-index: 2;
+    /* REMOVED the animation, as it's no longer needed */
+}
+
+.river-surface {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 170, 255, 0.1) 0%, rgba(0, 119, 187, 0.3) 100%);
+    border-top: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 10px 30px rgba(0, 150, 200, 0.4);
+    animation: water-surface-ripple 8s ease-in-out infinite alternate;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.river-surface::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        100deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 70%
+    );
+    animation: river-glint 12s linear infinite;
+    z-index: 4;
+}
+
+/* --- Keyframe animations (unchanged) --- */
+/* REMOVED @keyframes river-flow as it is no longer used */
+
+@keyframes water-surface-ripple {
+    0% { transform: scaleY(1); opacity: 0.8; }
+    50% { transform: scaleY(1.005); opacity: 0.9; }
+    100% { transform: scaleY(1); opacity: 0.8; }
+}
+@keyframes river-glint {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0%); }
+}
+
+/* --- Pure CSS Pixelated Bucket (Visible) --- */
+.bucket {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    pointer-events: none; /* Lets clicks pass through */
+    z-index: 1000;
+    
+    background: #a9a9a9;
+    border-left: 4px solid #6b6b6b;
+    border-right: 4px solid #6b6b6b;
+    border-bottom: 4px solid #6b6b6b;
+    box-sizing: border-box; 
+}
+
+.bucket-handle {
+    width: 24px;
+    height: 8px;
+    background: transparent;
+    border: 4px solid #6b6b6b;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    position: absolute;
+    top: -12px;
+    left: 0px;
+}
+
+.bucket-water {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0; /* Starts empty */
+    background: #3498db;
+    overflow: hidden;
+    transition: height 0.1s linear; /* Smooth fill */
+}
+
+/* --- CSS for water droplets --- */
+.droplet {
+    width: 6px;
+    height: 10px;
+    background: #3498db; /* Water color */
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Teardrop shape */
+    position: absolute;
+    bottom: -10px; /* Start just below the bar */
+    z-index: 9;
+    animation: fall 1.5s linear forwards;
+    pointer-events: none; /* Don't block clicks */
+}
+
+@keyframes fall {
+    from {
+        /* Start from just under the bar */
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        /* Fall 50px down and fade out */
+        transform: translateY(50px);
+        opacity: 0;
+    }
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Progress Bar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <svg width="0" height="0">
+      <defs>
+        <clipPath id="river-curve" clipPathUnits="objectBoundingBox">
+          <path d="M 0,0.2 Q 0.25,0.4 0.5,0.2 T 1,0.2 L 1,1 L 0,1 Z" />
+        </clipPath>
+      </defs>
+    </svg>
+
+    <h2>Fill the Water to See the Progress</h2>
+    <p>Scoop water from the river and pour it into the pipe opening to fill the progress bar.</p>
+
+    <div class="progress-container" id="progress-container">
+        <div class="progress-fill" id="progress-fill"></div>
+        <div class="fill-hole" id="fill-hole"></div>
+    </div>
+
+    
+    <div class="river-container" id="river-container">
+        <div class="river-surface"></div>
+        <div class="river-bed"></div>
+        <div class="river-background"></div> 
+    </div>
+    
+    <div class="bucket" id="bucket">
+        <div class="bucket-handle"></div>
+        <div class="bucket-water" id="bucket-water"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
