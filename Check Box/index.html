@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confusing Cursor Chaos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: none; /* Hide the real cursor */
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        input[type="checkbox"] {
+            width: 25px;
+            height: 25px;
+            cursor: none;
+        }
+
+        label {
+            cursor: none;
+        }
+
+        /* Realistic cursor styling using SVG */
+        .cursor-svg {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M0,0 L0,16 L6,12 L9,18 L11,17 L8,11 L14,11 Z" fill="white" stroke="black" stroke-width="1"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
+            transition: left 0.2s ease, top 0.2s ease;
+        }
+
+        .info {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .cursor-count {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #764ba2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Cursor Chaos Challenge</h1>
+        <p>Try to check the box... if you can!</p>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="myCheckbox">
+            <label for="myCheckbox">Check me!</label>
+        </div>
+
+        <div class="info">
+            💡 Click anywhere to make it easy...
+        </div>
+
+        <div class="cursor-count">
+            Active Cursors: <span id="cursorCount">3</span>
+        </div>
+    </div>
+
+    <script>
+        let cursors = [];
+        let lastMouseX = null;
+        let lastMouseY = null;
+        
+        const MIN_DISTANCE = 50;
+
+        // Function to calculate distance between two points
+        function getDistance(x1, y1, x2, y2) {
+            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        }
+
+        // Function to get close spawn position (cursors start very close together)
+        function getCloseSpawnPosition(centerX, centerY, index) {
+            // Position cursors in a tight cluster (30-60px radius)
+            const angle = (index * (Math.PI * 2)) / 3 + Math.random() * 0.5;
+            const distance = 30 + Math.random() * 30; // 30-60px from center
+            
+            return {
+                x: centerX + Math.cos(angle) * distance,
+                y: centerY + Math.sin(angle) * distance
+            };
+        }
+
+        // Fisher-Yates shuffle algorithm to randomly shuffle positions
+        function shuffleCursorPositions() {
+            // Store current positions
+            const positions = cursors.map(c => ({ x: c.x, y: c.y }));
+            
+            // Shuffle positions array using Fisher-Yates algorithm
+            for (let i = positions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [positions[i], positions[j]] = [positions[j], positions[i]];
+            }
+            
+            // Assign shuffled positions to cursors
+            cursors.forEach((cursor, index) => {
+                cursor.x = positions[index].x;
+                cursor.y = positions[index].y;
+            });
+            
+            updateCursorPositions();
+        }
+
+        // Resolve collisions to maintain minimum distance
+        function resolveCollisions() {
+            const iterations = 3;
+            
+            for (let iter = 0; iter < iterations; iter++) {
+                for (let i = 0; i < cursors.length; i++) {
+                    for (let j = i + 1; j < cursors.length; j++) {
+                        const cursor1 = cursors[i];
+                        const cursor2 = cursors[j];
+                        
+                        const distance = getDistance(cursor1.x, cursor1.y, cursor2.x, cursor2.y);
+                        
+                        if (distance < MIN_DISTANCE && distance > 0) {
+                            const overlap = MIN_DISTANCE - distance;
+                            const angle = Math.atan2(cursor2.y - cursor1.y, cursor2.x - cursor1.x);
+                            
+                            const pushDistance = overlap / 2;
+                            
+                            cursor1.x -= Math.cos(angle) * pushDistance;
+                            cursor1.y -= Math.sin(angle) * pushDistance;
+                            
+                            cursor2.x += Math.cos(angle) * pushDistance;
+                            cursor2.y += Math.sin(angle) * pushDistance;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Create cursor element
+        function createCursor(isReal = false, centerX, centerY, index) {
+            const cursor = document.createElement('div');
+            cursor.className = 'cursor-svg';
+            
+            const spawnPos = getCloseSpawnPosition(centerX, centerY, index);
+            cursor.style.left = spawnPos.x + 'px';
+            cursor.style.top = spawnPos.y + 'px';
+            
+            document.body.appendChild(cursor);
+            
+            cursors.push({
+                element: cursor,
+                x: spawnPos.x,
+                y: spawnPos.y,
+                isReal: isReal
+            });
+
+            updateCursorCount();
+        }
+
+        // Create initial cursors close together at screen center
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        createCursor(true, centerX, centerY, 0);  // Real cursor
+        createCursor(false, centerX, centerY, 1); // Fake cursor 1
+        createCursor(false, centerX, centerY, 2); // Fake cursor 2
+
+        // Track mouse movement and move all cursors by the same delta
+        document.addEventListener('mousemove', (e) => {
+            const currentMouseX = e.clientX;
+            const currentMouseY = e.clientY;
+            
+            // Initialize last position on first move
+            if (lastMouseX === null || lastMouseY === null) {
+                lastMouseX = currentMouseX;
+                lastMouseY = currentMouseY;
+                
+                // Position real cursor at mouse location initially
+                cursors.forEach(cursor => {
+                    if (cursor.isReal) {
+                        cursor.x = currentMouseX;
+                        cursor.y = currentMouseY;
+                    }
+                });
+                updateCursorPositions();
+                return;
+            }
+            
+            // Calculate mouse movement delta
+            const deltaX = currentMouseX - lastMouseX;
+            const deltaY = currentMouseY - lastMouseY;
+            
+            // Move all cursors by the same delta
+            cursors.forEach(cursor => {
+                cursor.x += deltaX;
+                cursor.y += deltaY;
+            });
+            
+            // Resolve collisions after movement
+            resolveCollisions();
+            
+            // Update DOM positions
+            updateCursorPositions();
+            
+            // Update last mouse position
+            lastMouseX = currentMouseX;
+            lastMouseY = currentMouseY;
+        });
+
+        // Update cursor positions in DOM
+        function updateCursorPositions() {
+            cursors.forEach(cursor => {
+                cursor.element.style.left = cursor.x + 'px';
+                cursor.element.style.top = cursor.y + 'px';
+            });
+        }
+
+        // Shuffle cursor positions AND add new cursors on click
+        document.addEventListener('click', (e) => {
+            // Shuffle existing cursor positions
+            shuffleCursorPositions();
+            
+            // Add 2-3 new cursors near the click position
+            const clickX = e.clientX;
+            const clickY = e.clientY;
+            const newCursors = Math.floor(Math.random() * 2) + 2;
+            
+            for (let i = 0; i < newCursors; i++) {
+                createCursor(false, clickX, clickY, i);
+            }
+        });
+
+        // Update cursor count
+        function updateCursorCount() {
+            document.getElementById('cursorCount').textContent = cursors.length;
+        }
+
+        // Ensure cursor stays hidden
+        document.body.style.cursor = 'none';
+        document.querySelectorAll('*').forEach(el => {
+            el.style.cursor = 'none';
+        });
+    </script>
+</body>
+</html>
